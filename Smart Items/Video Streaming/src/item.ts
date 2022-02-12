@@ -109,14 +109,14 @@ export default class VideoStream implements IScript<Props> {
 
 
     screen.addComponent(new OnPointerDown(
-      (e) => {
-          const toggleAction = channel.createAction('toggle', {value: !this.active[screen.name]})
-          channel.sendActions([toggleAction])
-      },
-      { button: ActionButton.POINTER,
-        distance: 6,
-        hoverText: 'Toggle'
-      }
+        (e) => {
+            const toggleAction = channel.createAction('toggle', {value: !this.active[screen.name]})
+            channel.sendActions([toggleAction])
+        },
+        { button: ActionButton.POINTER,
+          distance: 6,
+          hoverText: 'Toggle'
+        }
       )
     )
     

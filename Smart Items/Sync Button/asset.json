@@ -10,6 +10,22 @@
       "id": "onClick",
       "label": "When clicked",
       "type": "actions"
+    },
+    {
+      "id": "onlyVIPs",
+      "label": "Only VIPs",
+      "type": "boolean",
+      "default": "true"
+    },
+    {
+      "id": "onActivate",
+      "label": "When Activate",
+      "type": "actions"
+    },
+    {
+      "id": "onDeactivate",
+      "label": "When Deactivate",
+      "type": "actions"
     }
   ]
 }

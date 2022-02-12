@@ -1,10 +1,13 @@
 import { VerticalMovingPlatformSystem, VerticalMovingPlatform } from './platform'
 import * as utils from '@dcl/ecs-scene-utils'
 import { TriggerableArea, TriggerableAreaSystem } from './area'
+import * as serverHandler from 'src/serverHandler'
+
 
 export type Props = {
   enabled?: boolean
   speed?: number
+  onlyvips?: boolean
 }
 
 export default class TriggerableMovingVerticalArea implements IScript<Props> {
@@ -55,19 +58,19 @@ export default class TriggerableMovingVerticalArea implements IScript<Props> {
     // box.getComponent(GLTFShape).withCollisions = false
 
     const trigger = new TriggerableArea()
-    trigger.enabled = props.enabled
     
+    if (props.onlyvips)
+      async () => { trigger.enabled = props.enabled && await serverHandler.isVIP() }
+    else
+      trigger.enabled = props.enabled
+
     trigger.onEnter = () => {
-      if (trigger.enabled) {
-        log('start!')
+      if (trigger.enabled)
         this.start(platform)
-      }
     }
     trigger.onLeave = () => {
-      if (trigger.enabled) {
-        log('end!')
+      if (trigger.enabled)
         this.end(platform)
-      }
     }
 
     // // sync initial values

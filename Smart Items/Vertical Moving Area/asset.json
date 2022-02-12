@@ -19,6 +19,12 @@
       "max": 20,
       "min": -20,
       "step": 1
+    },
+    {
+      "id": "onlyvips",
+      "label": "Only VIPs",
+      "type": "boolean",
+      "default": false
     }
   ]
 }
