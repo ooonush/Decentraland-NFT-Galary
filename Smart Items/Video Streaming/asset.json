@@ -1,6 +1,6 @@
 {
   "id": "bd9cfae8-f657-4b3d-9a6c-f642ee455491",
-  "name": "Test smart item",
+  "name": "Video Stream",
   "tags": [],
   "model": "models/Screen_Independent.glb",
   "category": "decorations",
@@ -23,6 +23,17 @@
       "max": 1,
       "min": 0,
       "step": 0.01
+    },
+    {
+      "id": "onlyAdmins",
+      "label": "Only Admins",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "id": "onClick",
+      "label": "When clicked",
+      "type": "actions"
     }
   ],
   "actions": [

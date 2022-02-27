@@ -1,0 +1,15 @@
+{
+  "id": "6fd94041-7a02-4ed7-9ab7-3504aa5d224a",
+  "name": "Only Admins Area",
+  "tags": [],
+  "model": "models/box.glb",
+  "category": "decorations",
+  "parameters": [
+    {
+      "id": "enabled",
+      "label": "Enabled",
+      "type": "boolean",
+      "default": true
+    }
+  ]
+}

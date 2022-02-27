@@ -1,7 +1,11 @@
+import * as serverHandler from 'src/serverHandler'
+
 export type Props = {
   customStation?: string
   volume: number
   image?: string
+  onClick?: Actions
+  onlyAdmins?: boolean
 }
 
 export default class VideoStream implements IScript<Props> {
@@ -105,25 +109,26 @@ export default class VideoStream implements IScript<Props> {
 
     this.streamIcon[screen.name].addComponent(placeholderMaterial)
     
-    this.volume[screen.name] = props.volume
+    this.volume[screen.name] = props.volume;
 
+    (async () => {
+      let enabled = props.onlyAdmins ? await serverHandler.isVIP() : true;
 
-    screen.addComponent(new OnPointerDown(
-        (e) => {
-            const toggleAction = channel.createAction('toggle', {value: !this.active[screen.name]})
-            channel.sendActions([toggleAction])
-        },
-        { button: ActionButton.POINTER,
-          distance: 6,
-          hoverText: 'Toggle'
-        }
-      )
-    )
-    
+      if(enabled && props.onClick)
+        screen.addComponent(new OnPointerDown(
+            (e) => { channel.sendActions(props.onClick) },
+            { button: ActionButton.POINTER,
+              distance: 6,
+              hoverText: 'Toggle'
+            }
+          )
+        )
+    })()
+
     this.toggle(screen, false)
 
     // handle actions
-    channel.handleAction('toggle', (e) => this.toggle(screen, e.values['value']))
+    channel.handleAction('toggle', (e) => this.toggle(screen, !this.active[screen.name]))
     //channel.handleAction('changeURL', (e) => this.changeURL(screen, e.values['url']))
 
     channel.handleAction("hide", ({ sender }) => {

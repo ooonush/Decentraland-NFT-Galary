@@ -1,9 +1,8 @@
 {
   "id": "8c414e75-b6e4-4db2-8e07-a42be92db65f",
-  "name": "VerticalMoving",
+  "name": "Vertical Moving Area",
   "tags": [],
   "model": "models/TriggerArea.glb",
-  "category": "decorations",
   "parameters": [
     {
       "id": "enabled",

@@ -1,0 +1,15 @@
+{
+  "id": "7dc569fe-0bbe-4a45-8831-e9725eec7f71",
+  "name": "Only VIPs Blocker",
+  "tags": [],
+  "model": "models/box.glb",
+  "category": "decorations",
+  "parameters": [
+    {
+      "id": "enabled",
+      "label": "Enabled",
+      "type": "boolean",
+      "default": true
+    }
+  ]
+}

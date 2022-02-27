@@ -1,0 +1,29 @@
+{
+  "id": "8c414e75-b6e4-4db2-8e07-a42be92db65f",
+  "name": "VerticalMovingArea",
+  "tags": [],
+  "model": "models/TriggerArea.glb",
+  "parameters": [
+    {
+      "id": "enabled",
+      "label": "Enabled",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "id": "speed",
+      "label": "Speed",
+      "type": "slider",
+      "default": 5,
+      "max": 20,
+      "min": -20,
+      "step": 1
+    },
+    {
+      "id": "onlyvips",
+      "label": "Only VIPs",
+      "type": "boolean",
+      "default": false
+    }
+  ]
+}

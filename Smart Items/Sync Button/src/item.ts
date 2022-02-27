@@ -2,7 +2,7 @@ import * as server from 'src/serverHandler'
 
 export type Props = {
   onClick?: Actions
-  onlyVIPs?: boolean
+  onlyAdmin?: boolean
   onActivate?: Actions
   onDeactivate?: Actions
 }
@@ -24,57 +24,59 @@ export default class Button implements IScript<Props> {
     clip.play()
   }
 
-  async toggle(entity: Entity, value: boolean) {
+  async toggle(entity: Entity, value: boolean, sync: boolean) {
     this.play(entity)
+    
+    this.active[entity.uuid] = value
+    log(value)
+    if (sync)
+      await server.changeObjectCondition(entity.uuid, value)
 
-    this.active[entity.name] = value
-    server.changeLampCondition(entity.name, value);
+    log('name: ' + entity.uuid + '\n' + 
+        'sync: ' + sync + '\n' + 
+        'localActive: ' + this.active[entity.uuid] + '\n' + 
+        'serverActive: ' + await server.getObjectCondition(entity.uuid))
   }
 
   spawn(host: Entity, props: Props, channel: IChannel) {
-    const button = new Entity()
+    const button = new Entity(host.name + '-button')
     button.setParent(host)
 
     button.addComponent(new GLTFShape('models/Red_Button.glb'))
-
+    
     const animator = new Animator()
     const clip = new AnimationState('trigger', { looping: false })
     animator.addClip(clip)
-    button.addComponent(animator)
+    button.addComponent(animator);
 
-    async () => { 
-      this.active[button.name] = await server.getLampCondition("aboba1")
-    }
+    (async () => {
+      this.toggle(button, await server.getObjectCondition(button.uuid), false)
 
-    async () => { 
-      let isEnabled = true
-      if (props.onlyVIPs)
-        isEnabled = await server.isVIP()
-
-      if (isEnabled)
-          button.addComponent(new OnPointerDown(
-            () => {
-                const toggleAction = channel.createAction('toggle', {value: !this.active[button.name]})
-                channel.sendActions([toggleAction])
-            },
-            { button: ActionButton.POINTER,
-              distance: 6,
-              hoverText: 'Toggle'
-            }
-          )
-        )
+      let isEnabled = props.onlyAdmin ? await server.isAdmin() : true
+      if (isEnabled){
+        button.addComponent(new OnPointerDown(
+          () => channel.sendActions(props.onClick),
+          { button: ActionButton.POINTER,
+            distance: 6,
+            hoverText: 'Toggle'
+          }
+        ))
       }
+      else
+        button.getComponent(GLTFShape).visible = false
+    })()
 
-    channel.handleAction('toggle', 
-      (e) => {
-        const value = e.values['value']
-        this.toggle(button, value)
-
-        if ( e.sender === channel.id )
-          if (value)
-            channel.sendActions(props.onActivate)
-          else
-            channel.sendActions(props.onDeactivate)
+    channel.handleAction('toggle', async (e) => {
+      const value = e.values['value']
+      const sync = e.values['sync']
+      
+      await this.toggle(button, value, sync)
+      
+      if ( e.sender === channel.id )
+        if (value)
+          channel.sendActions(props.onActivate)
+        else
+          channel.sendActions(props.onDeactivate)
       }
     )
   }

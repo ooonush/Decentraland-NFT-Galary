@@ -1,6 +1,4 @@
 import * as serverHandler from 'src/serverHandler'
-import * as ui from '../node_modules/@dcl/ui-utils/index'
-import { PromptStyles } from '../node_modules/@dcl/ui-utils/index'
 
 export type Props = {
   id: string
@@ -14,12 +12,6 @@ export type Props = {
 export default class SignPost implements IScript<Props> {
   init() {}
 
-  openNFTDialog(scr: string, comment?: string | null): void {
-    let prompt = new ui.CustomPrompt(PromptStyles.LIGHT)
-    let myText = prompt.addText('Hello World', 0, 100)
-    let myIcon = prompt.addIcon()
-  }
-
   spawn(host: Entity, props: Props, channel: IChannel) {
     const frame = new Entity()
     frame.setParent(host)
@@ -31,6 +23,7 @@ export default class SignPost implements IScript<Props> {
       })
     )
     
+    let url = 'https://opensea.io/assets/' + props.contract + '/' + props.id
     let nft = 'ethereum://' + props.contract + '/' + props.id
     frame.addComponent(
       new NFTShape(nft, {
@@ -39,12 +32,13 @@ export default class SignPost implements IScript<Props> {
       })
     )
     
+
     if (props.ui) {
       frame.addComponent(
         new OnPointerDown(
           () => {
-            serverHandler.addPotentialBuyer()
-            this.openNFTDialog(nft, props.uiText ? props.uiText : null)
+            serverHandler.addPotentialBuyer(url)
+            openNFTDialog(nft, props.uiText ? props.uiText : null)
           },
           { hoverText: 'Open UI' }
         )
@@ -60,9 +54,5 @@ export default class SignPost implements IScript<Props> {
       if (sender === channel.id)
         frame.getComponent('engine.shape').visible = true
     })
-
-    // let test = new Entity()
-    // test.setParent(host)
-    // test.addComponent(new GLTFShape('models/CustomFrame.glb'))
   }
 }

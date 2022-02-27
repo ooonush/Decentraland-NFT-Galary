@@ -3,7 +3,6 @@ import * as utils from '@dcl/ecs-scene-utils'
 import { TriggerableArea, TriggerableAreaSystem } from './area'
 import * as serverHandler from 'src/serverHandler'
 
-
 export type Props = {
   enabled?: boolean
   speed?: number
@@ -60,7 +59,7 @@ export default class TriggerableMovingVerticalArea implements IScript<Props> {
     const trigger = new TriggerableArea()
     
     if (props.onlyvips)
-      async () => { trigger.enabled = props.enabled && await serverHandler.isVIP() }
+      (async () => trigger.enabled = props.enabled && await serverHandler.isVIP())()
     else
       trigger.enabled = props.enabled
 
@@ -73,12 +72,12 @@ export default class TriggerableMovingVerticalArea implements IScript<Props> {
         this.end(platform)
     }
 
-    // // sync initial values
-    // channel.request<boolean>(
-    //   'enabled',
-    //   (enabled) => (trigger.enabled = enabled)
-    // )
-    // channel.reply<boolean>('enabled', () => trigger.enabled)
+    // sync initial values
+    channel.request<boolean>(
+      'enabled',
+      (enabled) => (trigger.enabled = enabled)
+    )
+    channel.reply<boolean>('enabled', () => trigger.enabled)
 
     host.addComponent(trigger)
   }

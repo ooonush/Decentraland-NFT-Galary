@@ -1,19 +1,14 @@
 import { getUserData } from "@decentraland/Identity"
 
-let firebaseServerURL = "https://us-central1-nft-gallery-339414.cloudfunctions.net/app/"
-let userData = fetchUserData()
+let firebaseServerURL = "https://us-central1-nft-gallery-339414.cloudfunctions.net/app/";
+let userData = fetchUserData();
+let adminList = getAdminList();
 
-export async function fetchUserData() {
+let objectsConditions: { [name: string]: any } = {};
+
+async function fetchUserData() {
     return await getUserData()
 }
-
-export async function isVIP(){
-    let adminList = await getAdminList();
-    let guestList = await getGuestList();
-    let myAddress = (await fetchUserData()).publicKey;
-
-    return adminList.includes(myAddress) || guestList.includes(myAddress)
-  }
 
 async function getWalletAddressList(title:string) {
     try {
@@ -25,51 +20,51 @@ async function getWalletAddressList(title:string) {
     }
 }
 
-export async function getAdminList() {
+async function getAdminList() {
     return getWalletAddressList("get-admin-list")
 }
 
-export async function getGuestList() {
-    return getWalletAddressList("get-guest-list")
-}
-
-export async function changeLampCondition(name:string, condition:boolean) {
+async function fetchCondition(id:string) {
     try {
-        let response = await fetch(firebaseServerURL + "change-lamp-condition", {
+        let response = await fetch(firebaseServerURL + "get-object-condition", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
-            body: JSON.stringify({ name: name, condition: condition }),
+            body: JSON.stringify({ id: id }),
         })
+        return (await response.json())[0]
+    } catch (error) {
+        log("error fetch object conditions from server: " + error)
+    }
+}
+
+export async function changeObjectCondition(id:string, condition:any) {
+    try {
+        let response = await fetch(firebaseServerURL + "change-object-condition", {
+            headers: { "Content-Type": "application/json" },
+            method: "POST",
+            body: JSON.stringify({ id: id, condition: condition }),
+        })
+        objectsConditions[id] = condition;
 
         return response;
     } catch (error) {
-        log("error change lamp condition to server: " + error)
+        log("error change object condition to server: " + error);
     }
 }
 
-export async function getLampCondition(name:string) {
+export async function getObjectCondition(id:string) {
     try {
-        let response = await fetch(firebaseServerURL + "get-lamp-condition?name=" + name)
-        let json = await response.json()
-        return json[0].condition;
+        if (objectsConditions[id] === undefined) {
+            objectsConditions[id] = await fetchCondition(id);
+        }
+
+        return objectsConditions[id];
     } catch (error) {
-        log("error fetch lamp condition from server: " + error)
+        log("error get object condition from server: " + error);
     }
 }
 
-export async function addPotentialBuyer(url:string) {
-    try {
-        let address = (await userData).publicKey;
-        let name = (await userData).displayName;
-
-        let response = await fetch(firebaseServerURL + "add-potential-buyer", {
-            headers: { "Content-Type": "application/json" },
-            method: "POST",
-            body: JSON.stringify({ walletAddress: address, name: name, url: url }),
-        })
-
-        return response;
-    } catch (error) {
-        log("error add potential buyer to server: " + error)
-    }
+export async function isAdmin() {
+    let address = (await userData).publicKey
+    return (await adminList).includes(address);
 }

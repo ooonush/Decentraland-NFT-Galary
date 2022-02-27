@@ -1,6 +1,6 @@
 {
-  "id": "89d3e0e7-b9cd-406e-bd95-8abba3b37cc6",
-  "name": "Red Button",
+  "id": "4c6c4adf-96fe-48e3-acd4-4a809ffe4654",
+  "name": "Server Sync Red Button",
   "tags": [
     "button"
   ],
@@ -12,8 +12,8 @@
       "type": "actions"
     },
     {
-      "id": "onlyVIPs",
-      "label": "Only VIPs",
+      "id": "onlyAdmin",
+      "label": "Only Admin",
       "type": "boolean",
       "default": "true"
     },
@@ -26,6 +26,13 @@
       "id": "onDeactivate",
       "label": "When Deactivate",
       "type": "actions"
+    }
+  ],
+  "actions": [
+    {
+      "id": "toggle",
+      "label": "Toggle",
+      "parameters": []
     }
   ]
 }

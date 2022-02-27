@@ -1,0 +1,42 @@
+{
+  "id": "d0ebc757-685f-40b0-b4be-b9fc9c091e08",
+  "name": "Doors",
+  "tags": ["door"],
+  "model": "models/DoorsPreview.glb",
+  "parameters": [
+    {
+      "id": "onOpen",
+      "label": "When opened",
+      "type": "actions"
+    },
+    {
+      "id": "onClose",
+      "label": "When closed",
+      "type": "actions"
+    },
+    {
+      "id": "onEnter",
+      "label": "When Trigger Enter",
+      "type": "actions",
+      "default": "open"
+    },
+    {
+      "id": "onLeave",
+      "label": "When Trigger Leave",
+      "type": "actions",
+      "default": "close"
+    }
+  ],
+  "actions": [
+    {
+      "id": "open",
+      "label": "Open",
+      "parameters": []
+    },
+    {
+      "id": "close",
+      "label": "Close",
+      "parameters": []
+    }
+  ]
+}
