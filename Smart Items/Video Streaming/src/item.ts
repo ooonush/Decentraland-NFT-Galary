@@ -1,11 +1,12 @@
-import * as serverHandler from 'src/serverHandler'
-
 export type Props = {
   customStation?: string
   volume: number
+  looping: boolean
   image?: string
   onClick?: Actions
   onlyAdmins?: boolean
+  play?: Actions
+  stop?: Actions
 }
 
 export default class VideoStream implements IScript<Props> {
@@ -14,6 +15,7 @@ export default class VideoStream implements IScript<Props> {
   materials: Record<string, Material> = {}
   active: Record<string, boolean> = {}
   volume: Record<string, number> = {}
+  looping: Record<string, boolean> = {}
   streamIcon: Record<string, Entity> = {}
   activeScreen: Entity = new Entity
 
@@ -34,6 +36,7 @@ export default class VideoStream implements IScript<Props> {
       // this.activeScreen = entity
       this.active[entity.name] = true
       this.video[entity.name].volume = this.volume[entity.name]
+      this.video[entity.name].loop = this.looping[entity.name]
       this.video[entity.name].playing = true
       engine.removeEntity(this.streamIcon[entity.name])
       this.streamIcon[entity.name].getComponent(PlaneShape).visible = false
@@ -75,7 +78,9 @@ export default class VideoStream implements IScript<Props> {
     this.channel[screen.name] = props.customStation
     
     // video material
-    this.video[screen.name] = new VideoTexture(new VideoClip(this.channel[screen.name]))
+    let videoClip = new VideoClip(this.channel[screen.name])
+    
+    this.video[screen.name] = new VideoTexture(videoClip)
     this.materials[screen.name] = new Material()
     this.materials[screen.name].albedoTexture = this.video[screen.name]
     this.materials[screen.name].specularIntensity = 0
@@ -109,8 +114,10 @@ export default class VideoStream implements IScript<Props> {
 
     this.streamIcon[screen.name].addComponent(placeholderMaterial)
     
-    this.volume[screen.name] = props.volume;
 
+    this.looping[screen.name] = props.looping
+    this.volume[screen.name] = props.volume;
+    
     (async () => {
       let enabled = props.onlyAdmins ? await serverHandler.isVIP() : true;
 
@@ -130,6 +137,8 @@ export default class VideoStream implements IScript<Props> {
     // handle actions
     channel.handleAction('toggle', (e) => this.toggle(screen, !this.active[screen.name]))
     //channel.handleAction('changeURL', (e) => this.changeURL(screen, e.values['url']))
+    channel.handleAction('play', (e) => this.toggle(screen, true))
+    channel.handleAction('stop', (e) => this.toggle(screen, false))
 
     channel.handleAction("hide", ({ sender }) => {
       if (sender === channel.id)

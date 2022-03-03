@@ -10,6 +10,11 @@
       "label": "Enabled",
       "type": "boolean",
       "default": true
+    },
+    {
+      "id": "firebaseURL",
+      "label": "Firebase Server URL",
+      "type": "text"
     }
   ]
 }

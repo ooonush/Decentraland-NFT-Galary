@@ -24,6 +24,11 @@
       "label": "Only VIPs",
       "type": "boolean",
       "default": false
+    },
+    {
+      "id": "firebaseURL",
+      "label": "Firebase Server URL",
+      "type": "text"
     }
   ]
 }

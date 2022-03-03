@@ -121,6 +121,11 @@
 		"label": "Extra UI Text",
 		"type": "textarea",
 		"default": ""
+	  },
+	  {
+		"id": "firebaseURL",
+		"label": "Firebase Server URL",
+		"type": "text"
 	  }
   ],
   "actions": [

@@ -1,10 +1,11 @@
-import * as server from 'src/serverHandler'
+import { ServerHandler } from "./serverHandler"
 
 export type Props = {
   onClick?: Actions
   onlyAdmin?: boolean
   onActivate?: Actions
   onDeactivate?: Actions
+  firebaseURL: string
 }
 
 export default class Button implements IScript<Props> {
@@ -24,18 +25,18 @@ export default class Button implements IScript<Props> {
     clip.play()
   }
 
-  async toggle(entity: Entity, value: boolean, sync: boolean) {
-    this.play(entity)
+  async toggle(entity: Entity, value: boolean, sync: boolean, server: ServerHandler) {
+    if (value !== undefined){
+      this.play(entity)
     
-    this.active[entity.uuid] = value
-    log(value)
-    if (sync)
-      await server.changeObjectCondition(entity.uuid, value)
-
-    log('name: ' + entity.uuid + '\n' + 
-        'sync: ' + sync + '\n' + 
-        'localActive: ' + this.active[entity.uuid] + '\n' + 
-        'serverActive: ' + await server.getObjectCondition(entity.uuid))
+      this.active[entity.uuid] = value
+      
+      if (sync)
+      
+        await server.changeObjectCondition(entity.uuid, value)
+  
+      log(value)
+    }
   }
 
   spawn(host: Entity, props: Props, channel: IChannel) {
@@ -48,14 +49,16 @@ export default class Button implements IScript<Props> {
     const clip = new AnimationState('trigger', { looping: false })
     animator.addClip(clip)
     button.addComponent(animator);
+    this.active[button.uuid] = false
+    const server = new ServerHandler(props.firebaseURL);
 
     (async () => {
-      this.toggle(button, await server.getObjectCondition(button.uuid), false)
+      channel.sendActions([channel.createAction("toggle", {"value": await server.getObjectCondition(button.uuid), "sync": false})])
 
       let isEnabled = props.onlyAdmin ? await server.isAdmin() : true
       if (isEnabled){
         button.addComponent(new OnPointerDown(
-          () => channel.sendActions(props.onClick),
+          () => channel.sendActions([channel.createAction("toggle", {"value": !this.active[button.uuid], "sync": true})]),
           { button: ActionButton.POINTER,
             distance: 6,
             hoverText: 'Toggle'
@@ -69,14 +72,16 @@ export default class Button implements IScript<Props> {
     channel.handleAction('toggle', async (e) => {
       const value = e.values['value']
       const sync = e.values['sync']
-      
-      await this.toggle(button, value, sync)
-      
-      if ( e.sender === channel.id )
-        if (value)
-          channel.sendActions(props.onActivate)
-        else
-          channel.sendActions(props.onDeactivate)
+
+      if (value != this.active[button.uuid]){
+        await this.toggle(button, value, sync, server)
+        
+        if ( e.sender === channel.id )
+          if (value)
+            channel.sendActions(props.onActivate)
+          else
+            channel.sendActions(props.onDeactivate)
+        }
       }
     )
   }

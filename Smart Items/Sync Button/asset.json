@@ -7,11 +7,6 @@
   "category": "decorations",
   "parameters": [
     {
-      "id": "onClick",
-      "label": "When clicked",
-      "type": "actions"
-    },
-    {
       "id": "onlyAdmin",
       "label": "Only Admin",
       "type": "boolean",
@@ -26,13 +21,11 @@
       "id": "onDeactivate",
       "label": "When Deactivate",
       "type": "actions"
-    }
-  ],
-  "actions": [
+    },
     {
-      "id": "toggle",
-      "label": "Toggle",
-      "parameters": []
+      "id": "firebaseURL",
+      "label": "Firebase Server URL",
+      "type": "text"
     }
   ]
 }

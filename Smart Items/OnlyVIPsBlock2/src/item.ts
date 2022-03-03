@@ -1,7 +1,8 @@
-import * as serverHandler from 'src/serverHandler'
+import { ServerHandler } from "src/serverHandler"
 
 export type Props = {
   enabled?: boolean
+  firebaseURL: string
 }
 
 export default class OnlyAdminsArea implements IScript<Props> {
@@ -21,7 +22,7 @@ export default class OnlyAdminsArea implements IScript<Props> {
     
     if (props.enabled)
       (async () => {
-        if (await serverHandler.isAdmin())
+        if (await new ServerHandler(props.firebaseURL).isAdmin())
           box.getComponent(BoxShape).withCollisions = false
       })()
   }

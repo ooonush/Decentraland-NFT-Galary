@@ -1,12 +1,12 @@
 import { VerticalMovingPlatformSystem, VerticalMovingPlatform } from './platform'
-import * as utils from '@dcl/ecs-scene-utils'
 import { TriggerableArea, TriggerableAreaSystem } from './area'
-import * as serverHandler from 'src/serverHandler'
+import { ServerHandler } from './serverHandler'
 
 export type Props = {
   enabled?: boolean
   speed?: number
   onlyvips?: boolean
+  firebaseURL: string
 }
 
 export default class TriggerableMovingVerticalArea implements IScript<Props> {
@@ -59,7 +59,7 @@ export default class TriggerableMovingVerticalArea implements IScript<Props> {
     const trigger = new TriggerableArea()
     
     if (props.onlyvips)
-      (async () => trigger.enabled = props.enabled && await serverHandler.isVIP())()
+      (async () => trigger.enabled = props.enabled && await new ServerHandler(props.firebaseURL).isVIP())()
     else
       trigger.enabled = props.enabled
 

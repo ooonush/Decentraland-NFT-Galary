@@ -10,7 +10,8 @@ spawner.spawn(
     position: new Vector3(4, 0, 8)
   }),
   {
-    onlyAdmin: true
+    //onlyAdmin: true,
+    firebaseURL: "https://us-central1-nft-gallery-15f17.cloudfunctions.net/app/"
   }
 )
 
@@ -20,6 +21,7 @@ spawner.spawn(
     position: new Vector3(5, 0, 8)
   }),
   {
-    onlyAdmin: false
-  }
+    //onlyAdmin: false,
+    firebaseURL: "https://us-central1-nft-gallery-15f17.cloudfunctions.net/app/"
+  },
 )

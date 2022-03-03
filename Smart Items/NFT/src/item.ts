@@ -1,4 +1,4 @@
-import * as serverHandler from 'src/serverHandler'
+import { ServerHandler } from "./serverHandler"
 
 export type Props = {
   id: string
@@ -7,6 +7,7 @@ export type Props = {
   color: string
   ui: boolean
   uiText: string
+  firebaseURL: string
 }
 
 export default class SignPost implements IScript<Props> {
@@ -32,12 +33,14 @@ export default class SignPost implements IScript<Props> {
       })
     )
     
+    host.getComponent(Shape).withCollisions = false
+    frame.getComponent(Shape).withCollisions = false
 
     if (props.ui) {
       frame.addComponent(
         new OnPointerDown(
           () => {
-            serverHandler.addPotentialBuyer(url)
+            new ServerHandler(props.firebaseURL).addPotentialBuyer(url)
             openNFTDialog(nft, props.uiText ? props.uiText : null)
           },
           { hoverText: 'Open UI' }
